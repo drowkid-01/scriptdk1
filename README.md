@@ -1,4 +1,4 @@
-# scriptcgh
+# scriptdk1
 
 script instalación free sin key [modificas el ress y el nombre del server]
 ```

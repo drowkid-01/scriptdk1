@@ -35,7 +35,7 @@ echo -e "      \e[1m$(printext 'ＥＳＰＥＲＥ  ＵＮ  ＭＯＭＥＮＴ�
 msg -bar
 if curl -sSL http://$(ofus $ip):81/ChumoGH/checkIP.log|grep ${key//$ip/} &> /dev/null; then
 	idd=$(curl -sSL http://$(ofus $ip):81/ChumoGH/checkIP.log|grep ${key//$ip/}|awk -F "|" '{print $1}')
-	url="https://api.telegram.org/bot$(curl -sSL https://raw.githubusercontent.com/drowkid01/scriptcgh/main/Control/token.sh|awk '{print $1}')/getChatMember"
+	url="https://api.telegram.org/bot$(curl -sSL https://raw.githubusercontent.com/drowkid01/scriptdk1/main/Control/token.sh|awk '{print $1}')/getChatMember"
 
 	while read user; do
 		name=$(echo $user|jq -r .result.user.first_name)
