@@ -1,0 +1,448 @@
+#!/bin/bash
+source msg
+
+start_menu(){
+source /etc/adm-lite/cabecalho
+clear
+[[ -e /root/name ]] && {
+	figlet -f future $(cat /root/name) | lolcat
+	msg -bar
+} || {
+	cat <<< '╻ ╻┏━╸┏━┓┏━┓┏━┓┏┳┓╻┏━╸┏┓╻╺┳╸┏━┓┏━┓
+┣━┫┣╸ ┣┳┛┣┳┛┣━┫┃┃┃┃┣╸ ┃┗┫ ┃ ┣━┫┗━┓
+╹ ╹┗━╸╹┗╸╹┗╸╹ ╹╹ ╹╹┗━╸╹ ╹ ╹ ╹ ╹┗━┛'
+	msg -bar
+}
+msg -ama "	   $(printext 'HERRAMIENTAS GENERALES')"
+msg -bar
+menu_func '-fi BLOCK TORRENT;configuración' 'FIX PASSWD VULTR' "MENÚ BADVPN $_badvpn" "TCP-SPEED $_tcpspeed" "-fi FAIL2BAN PROTECTION;mantiene segura tu ip  $fail_b" \
+"DATOS DEL SERVIDOR" "-fi SPEED-TEST;test de velocidad" 'COMPARTIR ARCHIVOS ONLINE' 'GENERADOR DE PAYLOADS' 'ULTRAHOST DE DOMINIOS' 'CAPTURAR SUBDOMINIOS' '-fi REINICIAR VPS;reboot'
+back
+#echo -e "\033[0;35m [\033[0;36m1\033[0;35m]\033[0;31m ➮${cor[3]} Bloqueo Torrent y Palabras Claves \033[0;33m( #BETA )"
+#echo -e "\033[0;35m [\033[0;36m2\033[0;35m]\033[0;31m ➮${cor[3]} FIX PassWD Vultr"
+#echo -e "\033[0;35m [\033[0;36m3\033[0;35m]\033[0;31m ➮${cor[3]} Bad-VPN (Juegos Online/VideoCalls) $_badvpn"
+#echo -e "\033[0;35m [\033[0;36m4\033[0;35m]\033[0;31m ➮${cor[3]} TCP SPEED ( BBR ) $_tcpspeed"
+#echo -e "\033[0;35m [\033[0;36m5\033[0;35m]\033[0;31m ➮${cor[3]} FAILBAN\033[0;32m ( Secure IP ) $fail_b"
+#echo -e "\033[0;35m [\033[0;36m6\033[0;35m]\033[0;31m ➮${cor[3]} DETALLES DEL VPS "
+#echo -e "\033[0;35m [\033[0;36m7\033[0;35m]\033[0;31m ➮${cor[3]} TEST DE VELOCIDAD DEL SERVIDOR"
+#echo -e "\033[0;35m [\033[0;36m8\033[0;35m]\033[0;31m ➮${cor[3]} COMPARTIR ARCHIVO ONLINE"
+#echo -e "\033[0;35m [\033[0;36m9\033[0;35m]\033[0;31m ➮${cor[3]} GENERADOR DE PAYLOAD"
+#echo -e "\033[0;35m [\033[0;36m10\033[0;35m]\033[0;31m ➮${cor[3]} ULTRA HOST DE DOMINIOS "
+#echo -e "\033[0;35m [\033[0;36m11\033[0;35m]\033[0;31m ➮${cor[3]} CAPTURAR SUBDOMINIOS \033[0;33m( #ToolMaster )"
+#echo -e "\033[0;35m [\033[0;36m12\033[0;35m]\033[0;31m ➮${cor[3]} REINICIAR VPS (REBOOT)"
+#msg -bar 
+#echo -e " \033[0;35m[\033[0;36m0\033[0;35m]\033[0;31m ➮ $(msg -bra "\033[1;41m[ Regresar ]\e[0m")"
+#msg -bar
+}
+
+block_torrent(){
+	msg -bar
+	source <(curl -sL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Recursos/blockT.sh)
+	msg -bar
+	export PATH=$PATH:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin:/usr/games
+}
+
+fix_vultr(){
+#echo -e 'Aplicando FIX para Vultr VPS Passwd'
+echo -e "	$(printext 'EJECUTANDO FIXEO PARA VULTR')"
+echo -e "\e[1;97mAÑADIENDO REGISTRO A PAM.D"
+sed -i 's/.*pam_cracklib.so.*/password sufficient pam_unix.so sha512 shadow nullok try_first_pass #use_authtok/' /etc/pam.d/common-password
+msg -bar #
+echo -e "\e[1;32m[✓] REGISTRO AÑADIDO [✓]"
+msg -bar #
+sleep 2s
+}
+
+badUDP(){
+msg -bar 
+echo -e "	$(printext 'INSTALANDO BADVPN')"
+msg -bar
+source <(curl -sSL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Recursos/ferramentas/budp.sh)
+}
+
+tcp_BBR(){
+msg -bar 
+echo -e "${cor[4]} Este Script fue proyectado"
+echo -e "${cor[4]} Para Mejorar La Latencia"
+echo -e "${cor[4]} y velocidad del servidor!"
+msg -bar 
+echo -e "${cor[5]} ANALIZADO POR @drowkid01"
+sleep 1s
+if [[ `grep -c "^#ADM" /etc/sysctl.conf` -eq 0 ]]; then
+#INSTALA
+echo -e "${cor[5]} Este es un script experimental"
+echo -e "${cor[5]} ¡Utilice por su propia cuenta y riesgo!"
+echo -e "${cor[5]} Este script cambiará algunas"
+echo -e "${cor[5]} configuraciones de red (BBR)"
+echo -e "${cor[5]} del sistema para reducir"
+echo -e "${cor[5]} la latencia y mejorar la velocidad"
+msg -bar 
+read -p " Continuar con la instalación? [s/n]: " -e -i s resp_osta
+echo -e "\033[1;37m"
+if [[ "$resp_osta" = 's' ]]; then
+unset resp_osta
+echo "#ADM" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_window_scaling = 1
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 16384 16777216
+net.ipv4.tcp_low_latency = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf > /dev/null 2>&1
+echo -e "${cor[5]} Configuración de red TCP"
+echo -e "${cor[5]} se han agregado con éxito"
+msg -bar 
+return
+ else
+msg -bar 
+return
+fi
+ else
+#REMOVE
+echo -e "${cor[5]} Configuración de red TCP"
+echo -e "${cor[5]} ya se han agregado en el sistema!"
+msg -bar
+read -p " Desea quitar la configuración TCP? [s/n]: " -e -i n res_posta
+if [[ "$res_posta" = 's' ]]; then
+unset res_posta
+grep -v "^#ADM
+net.ipv4.tcp_window_scaling = 1
+net.core.rmem_max = 16777216
+net.core.wmem_max = 16777216
+net.ipv4.tcp_rmem = 4096 87380 16777216
+net.ipv4.tcp_wmem = 4096 16384 16777216
+net.ipv4.tcp_low_latency = 1
+net.ipv4.tcp_slow_start_after_idle = 0
+net.core.default_qdisc=fq
+net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf > /tmp/syscl && mv -f /tmp/syscl /etc/sysctl.conf
+sysctl -p /etc/sysctl.conf > /dev/null 2>&1
+echo -e "${cor[5]} Configuración de red TCP"
+echo -e "${cor[5]} se han eliminado con éxito"
+msg -bar
+return
+ else
+msg -bar 
+return
+ fi
+fi
+}
+
+fail_ban () {
+bash -c "$(curl -fsSL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Recursos/ferramentas/fai2ban.sh)"
+fail2ban-testcases -x start 2>/dev/null
+fail2ban-client -x start 2>/dev/null
+}
+
+testing_test () {
+clear&&clear
+msg -bar
+
+echo -e " INICIANDO PRUEBAS DE VELOCIDAD !"  | pv -qL 25
+llenadatos_() {
+#python
+[[ $(dpkg --get-selections|grep -w "python"|head -1) ]] || apt-get install python -y &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python"|head -1) ]] || ESTATUS=`echo -e "\033[91mFALLO DE INSTALACION"` &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python"|head -1) ]] && ESTATUS=`echo -e "\033[92mINSTALADO"` &>/dev/null
+echo -e "\033[97m  # apt-get install python-pip........... $ESTATUS "
+#pip
+[[ $(dpkg --get-selections|grep -w "python-pip"|head -1) ]] || apt-get install python-pip -y &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python-pip"|head -1) ]] || ESTATUS=`echo -e "\033[91mFALLO DE INSTALACION"` &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python-pip"|head -1) ]] && ESTATUS=`echo -e "\033[92mINSTALADO"` &>/dev/null
+echo -e "\033[97m  # apt-get install python-pip........... $ESTATUS "
+#python3
+[[ $(dpkg --get-selections|grep -w "python3"|head -1) ]] || apt-get install python3 -y &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python3"|head -1) ]] || ESTATUS=`echo -e "\033[91mFALLO DE INSTALACION"` &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python3"|head -1) ]] && ESTATUS=`echo -e "\e[3;32mINSTALADO\e[0m"` &>/dev/null
+echo -e "\033[97m  # apt-get install python3.............. $ESTATUS "
+#python3-pip
+[[ $(dpkg --get-selections|grep -w "python3-pip"|head -1) ]] || apt-get install python3-pip -y &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python3-pip"|head -1) ]] || ESTATUS=`echo -e "\033[91mFALLO DE INSTALACION"` &>/dev/null
+[[ $(dpkg --get-selections|grep -w "python3-pip"|head -1) ]] && ESTATUS=`echo -e "\e[3;32mINSTALADO\e[0m"` &>/dev/null
+echo -e "\033[97m  # apt-get install python3-pip.......... $ESTATUS "
+#speedtest
+[[ $(dpkg --get-selections|grep -w "speedtest"|head -1) ]] || apt-get install speedtest* -y &>/dev/null
+[[ $(dpkg --get-selections|grep -w "speedtest"|head -1) ]] || ESTATUS=`echo -e "\033[91mFALLO DE INSTALACION"` &>/dev/null
+[[ $(dpkg --get-selections|grep -w "speedtest"|head -1) ]] && ESTATUS=`echo -e "\e[3;32mINSTALADO\e[0m"` &>/dev/null
+echo -e "\033[97m  # apt-get install speedtest ........... $ESTATUS "
+echo "FIX" > /bin/ejecutar/fixTST
+}
+
+[[ -e /bin/ejecutar/fixTST ]] || llenadatos_
+
+function aguarde() {
+	sleep 1
+	helice() {
+		#TMPDIR="$(mktemp -d)"
+		speedtest --share > /bin/ejecutar/result.txt &
+		tput civis
+		while [ -d /proc/$! ]; do
+			for i in / - \\ \|; do
+				sleep .1
+				echo -ne "\e[1D$i"
+			done
+		done
+		tput cnorm
+	}
+	echo -ne "\033[1;37m REALIZANDO PRUEBAS DE\033[1;32m DESCARGA \033[1;37m& \033[1;32mSUBIDA\033[1;32m.\033[1;33m.\033[1;31m. \033[1;33m"
+	helice
+	echo -e "\e[1DOk"
+}
+
+msg -bar 
+aguarde
+msg -bar
+pingGG=$(ping -c1 google.com |awk '{print $8 $9}' |grep -v loss |cut -d = -f2 |sed ':a;N;s/\n//g;ta')
+power_by=$(less /bin/ejecutar/result.txt | grep "Testing from" | awk '{print $3,$4}')
+down_load=$(less /bin/ejecutar/result.txt | grep "Download" | awk '{print $2,$3}')
+up_load=$(less /bin/ejecutar/result.txt | grep "Upload" | awk '{print $2,$3}')
+resultURL=$(less /bin/ejecutar/result.txt | grep "Share results" | awk '{print $2,$3}')
+echo -e "${cor[5]} HOSTING BASE   : $power_by "
+echo -e "${cor[5]} LATENCIA PING  : $pingGG "
+echo -e "${cor[5]} V DE SUBIDA    : $up_load"
+echo -e "${cor[5]} V DE DESCARGA  : $down_load"
+echo -e "${cor[5]} URL DE TEST    : $resultURL"
+msg -bar 
+return
+}
+
+function_10 () {
+null="\033[1;31m"
+msg -bar  
+if [ ! /proc/cpuinfo ]; then
+echo -e "${cor[4]} Error al procesar información"
+msg -bar  
+return
+fi
+if [ ! /etc/issue.net ]; then
+echo -e "${cor[4]} Error al procesar información"
+msg -bar  
+return
+fi
+if [ ! /proc/meminfo ]; then
+echo -e "${cor[4]} Error al procesar información"
+msg -bar  
+return
+fi
+totalram=$(free | grep Mem | awk '{print $2}')
+usedram=$(free | grep Mem | awk '{print $3}')
+freeram=$(free | grep Mem | awk '{print $4}')
+swapram=$(cat /proc/meminfo | grep SwapTotal | awk '{print $2}')
+system=$(cat /etc/issue.net)
+clock=$(lscpu | grep "CPU MHz" | awk '{print $3}')
+based=$(cat /etc/*release | grep ID_LIKE | awk -F "=" '{print $2}')
+processor=$(cat /proc/cpuinfo | grep "model name" | uniq | awk -F ":" '{print $2}')
+cpus=$(cat /proc/cpuinfo | grep processor | wc -l)
+if [ "$system" ]; then
+echo -e "${cor[5]} Su Sistema          : ${null}$system"
+else
+echo -e "${cor[5]} Su Sistema          : ${null}???"
+fi
+if [ "$based" ]; then
+echo -e "${cor[5]} BASADO              : ${null}$based"
+else
+echo -e "${cor[5]} BASADO              : ${null}???"
+fi
+if [ "$processor" ]; then
+echo -e "${cor[5]} PROCESADOR FISICO   : ${null}$processor x$cpus"
+else
+echo -e "${cor[5]} PROCESADOR FISICO   : ${null}???"
+fi
+if [ "$clock" ]; then
+echo -e "${cor[5]} FRECUENCIA MAXIMA   : ${null}$clock MHz"
+else
+echo -e "${cor[5]} FRECUENCIA MAXIMA   : ${null}???"
+fi
+echo -e "${cor[5]} USO DEL CPU         : ${null}$(ps aux  | awk 'BEGIN { sum = 0 }  { sum += sprintf("%f",$3) }; END { printf " " "%.2f" "%%", sum}')"
+echo -e "${cor[5]} Arquitectura CPU ID : ${null}$(lscpu | grep "Vendor ID" | awk '{print $3}')"
+echo -e "${cor[5]} MEMORIA RAM Total   : ${null}$(($totalram / 1024))"
+echo -e "${cor[5]} MEMORIA RAM USADA   : ${null}$(($usedram / 1024))"
+echo -e "${cor[5]} MEMORIA RAM LIBRE   : ${null}$(($freeram / 1024))"
+echo -e "${cor[5]} MEMORIA SWAP        : ${null}$(($swapram / 1024))MB"
+echo -e "${cor[5]} TIEMPO ONLINE      : ${null}$(uptime)"
+echo -e "${cor[5]} NOMBRE DEL VPS      : ${null}$(hostname)"
+echo -e "${cor[5]} DIRECCION  VPS : ${null}$(ip addr | grep inet | grep -v inet6 | grep -v "host lo" | awk '{print $2}' | awk -F "/" '{print $1}' | head -1)"
+echo -e "${cor[5]} DIRECCION DE LA VPS : ${null}$(wget -qO- ifconfig.me)"
+echo -e "${cor[5]} VERSION DEL KERNEL : ${null}$(uname -r)"
+echo -e "${cor[5]} ARQUITECTURA DEL VPS: ${null}$(uname -m)"
+msg -bar  
+return
+}
+
+criar_pay () {
+msg -bar  
+echo -e "${cor[5]} DIJITE SU HOST PARA EMPEZAR"
+echo -e "${cor[5]} ¡PAYLOADS GENERICAS!"
+echo -e "${cor[5]} INGRESA TU HOST"
+msg -bar  
+read -p " => " valor1
+if [ "$valor1" = "" ]; then
+echo -e "${cor[5]} NO SE INGRESO HOST!!!"
+return
+fi
+meu_ip
+valor2="$IP"
+if [ "$valor2" = "" ]; then
+valor2="127.0.0.1"
+fi
+msg -bar  
+echo -e "${cor[5]} ELEJIR METODO DE RESPUESTA ${cor[3]}"
+echo -e " 1-GET"
+echo -e " 2-CONNECT"
+echo -e " 3-PUT"
+echo -e " 4-OPTIONS"
+echo -e " 5-DELETE"
+echo -e " 6-HEAD"
+echo -e " 7-TRACE"
+echo -e " 8-PROPATCH"
+echo -e " 9-PATCH"
+msg -bar  
+read -p " => " valor3
+case $valor3 in
+1)req="GET";;
+2)req="CONNECT";;
+3)req="PUT";;
+4)req="OPTIONS";;
+5)req="DELETE";;
+6)req="HEAD";;
+7)req="TRACE";;
+8)req="PROPATCH";;
+9)req="PATCH";;
+*)req="GET";;
+esac
+msg -bar  
+echo -e "${cor[5]} POR ULTIMO"
+echo -e "${cor[5]} METODO DE INJECCCION ${cor[3]}"
+echo -e " 1-realData"
+echo -e " 2-netData"
+echo -e " 3-raw"
+msg -bar  
+read -p " => " valor4
+case $valor4 in
+1)in="realData";;
+2)in="netData";;
+3)in="raw";;
+*)in="netData";;
+esac
+msg -bar  
+name=$(echo $valor1 | awk -F "/" '{print $2'})
+if [ "$name" = "" ]; then
+name=$(echo $valor1 | awk -F "/" '{print $1'})
+fi
+esquelet="/etc/adm-lite/payloads"
+sed -s "s;realData;abc;g" $esquelet > $HOME/$name.txt
+sed -i "s;netData;abc;g" $HOME/$name.txt
+sed -i "s;raw;abc;g" $HOME/$name.txt
+sed -i "s;abc;$in;g" $HOME/$name.txt
+sed -i "s;get;$req;g" $HOME/$name.txt
+sed -i "s;mhost;$valor1;g" $HOME/$name.txt
+sed -i "s;mip;$valor2;g" $HOME/$name.txt
+if [ "$(cat $HOME/$name.txt | egrep -o "$valor1")" = "" ]; then
+echo -e ""
+echo -e "${cor[3]} ALGO ESTA \033[1;36mMAL !!"
+rm $HOME/$name.txt
+return
+fi
+echo -e "${cor[3]} GENERACION DE PAYLOAD EXITOSA !!"
+echo -e "${cor[3]} DIRECTORIO \033[1;31m$HOME/$name.txt"
+return
+}
+
+t_master () {
+clear
+toolmaster
+}
+
+paybrute () {
+chmod +x ./paysnd.sh
+./paysnd.sh
+}
+
+online_url(){
+msg -ama "¡PUEDES ACCEDER AL MENÚ SERVER-WEB DESDE LOS COMANDOS!"
+msg -bar
+msg -ama "USA: \e[1;97mserv --upload /etc/adm-lite/menu \e[1;30m[\e[38;5;219m#subir un archivo\e[1;30m]"
+msg -ama "USA: \e[1;97mserv --upload /etc/adm-lite/menu \e[1;30m[\e[38;5;219m#borrar un archivo\e[1;30m]"
+msg -ama "USA: \e[1;97mserv --view-files \e[1;30m[\e[38;5;219m#ver tus archivos\e[1;30m]"
+echo -e "\e[1;97mó simplemente usa serv y accederás al menú del servidor online!"
+enter
+	if [[ ! -e /usr/games/serv ]]; then
+		wget -O /usr/games/serv https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Recursos/server.sh &> /dev/null
+		chmod +x /usr/games/serv
+		/usr/games/serv
+	else
+		/usr/games/serv
+	fi
+}
+
+gen-payloads(){
+source <(curl -sSL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Recursos/ferramentas/gen-pays.sh)
+enter
+}
+
+function_17 () {
+echo -e " ESTAS SEGURO DE REINICIAR TU SERVIDOR VPS"
+read -p " [S/N]: " -e -i n sshsn
+[[ "$sshsn" = @(s|S|y|Y) ]] && {
+msg -bar  
+echo -e "\033[1;36m EJECUTANDO REINICIO"
+sleep 3s
+msg -bar  
+echo -e "\033[1;36m OK"
+sleep 1s
+sudo reboot
+} 
+}
+
+if [[ -z $1 ]]; then
+	while true; do
+		start_menu
+		selection=$(selection_fun 19)
+		case ${selection} in
+			0)break;;
+			1)block_torrent&&enter;;
+			2)fix_vultr&&enter;;
+			3)badUDP&&enter;;
+			4)tcp_BBR&&enter;;
+			5)fail_ban&&enter;;
+			6)function_10&&enter;;
+			7)testing_test&&enter;;
+			8)online_url&&enter;;
+			#9)criar_pay&&enter;;
+			9)gen-payloads&&enter;;
+			10)msg -bar
+				echo -ne "\033[1;33m HOST: \033[1;37m"; read hostcaptura
+				echo -ne "\033[1;33m LIMITE DE CAPTURA: \033[1;37m"; read limitecaptura
+				chmod 777 ./ultrahost
+				/etc/adm-lite/ultrahost "${hostcaptura}" "${limitecaptura}"
+				enter;;
+			11)t_master&&enter;;
+			12)function_17&&enter;;
+		esac
+	done
+/etc/adm-lite/menu
+else
+	case $1 in
+		--block-torrent | --block-t)
+			block_torrent&&enter;;
+		--fix-vult | --vultr )fix_vultr&&enter;;
+		--badvpn | --budp )badUDP&&enter;;
+		--tcp )tcp_BBR&&enter;;
+		--fban | --fail-ban)fail_ban&&enter;;
+		--info-vps | --info)function_10&&enter;;
+		--speed-test | --test)testing_test&&enter;;
+		--server-web | --server)online_url&&enter;;
+		#--payload)criar_pay&&enter;;
+		--payload)gen-payloads&&enter;;
+		--ultrahost)msg -bar
+			echo -ne "\033[1;33m HOST: \033[1;37m"; read hostcaptura
+			echo -ne "\033[1;33m LIMITE DE CAPTURA: \033[1;37m"; read limitecaptura
+			chmod 777 ./ultrahost
+			/etc/adm-lite/ultrahost "${hostcaptura}" "${limitecaptura}"
+			enter;;
+		--toolmaster)t_master&&enter;;
+		--reiniciar-vps | --reboot)function_17&&enter;;
+	esac
+fi
