@@ -18,7 +18,7 @@ until [[ ! -z ${args[@]} ]]; do
   args=($(echo $*|awk -F "-" '{print $1,$2,$3,$4,$5,$6,$7,$8,$9}'))
    for((i=0;i<=${#args[@]};i++));do
      case ${args[@]:0} in
-	'ADMcgh'|'start'|'drowkid'|'update')break;;
+	'SCPDK1'|'start'|'drowkid'|'update')break;;
         *)exit "$((( $? * $OPTIND ) / $RANDOM ))";;
      esac
    done
