@@ -11,7 +11,7 @@ rm -f instala.*
 [[ -e /etc/folteto ]] && rm -f /etc/folteto
 [[ -e /bin/ejecutar/IPcgh ]] && rm -f /bin/ejecutar/IPcgh
 [[ ! -z $1 ]] && {
-[[ "$1" == '--SCPDK1' ]] && echo -e " ESPERE UN MOMENTO $1" || {
+[[ "$1" == @('--install'|'-i'|'--SCPDK1') ]] && echo -e " ESPERE UN MOMENTO $1" || {
 
 exit&&exit
 }
@@ -21,8 +21,8 @@ dpkg-reconfigure --frontend noninteractive tzdata >/dev/null 2>&1
 [[ $(dpkg --get-selections|grep -w "sudo"|head -1) ]] || apt install sudo -y &> /dev/null
 [[ $(dpkg --get-selections|grep -w "curl"|head -1) ]] || apt install curl -y &>/dev/null
 [[ $(dpkg --get-selections|grep -w "uuid-runtime"|head -1) ]] || apt-get install uuid-runtime -y &>/dev/null
-source <(curl -sSL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/msg-bar/msg)
-_double=$(curl -sSL "https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Control/Control-BOT")
+source <(curl -sSL https://raw.githubusercontent.com/drowkid-01/scriptdk1/main/msg-bar/msg)
+_double=$(curl -sSL "https://raw.githubusercontent.com/drowkid-01/scriptdk1/main/Control/Control-BOT")
 COLS=$(tput cols)
 os_system(){ 
  system=$(cat -n /etc/issue |grep 1 |cut -d ' ' -f6,7,8 |sed 's/1//' |sed 's/      //') 
@@ -57,13 +57,13 @@ clear
 #Key="$(cat /etc/cghkey)"
 Key="$1"
 IiP="$(ofus "$Key" | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
-[[ ! -e /file ]] && wget -q -O /file https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Control/Control-BOT
+[[ ! -e /file ]] && wget -q -O /file https://raw.githubusercontent.com/drowkid-01/scriptdk1/main/Control/Control-BOT
 _double=$(cat < /file)
 _check2="$(echo -e "$_double" | grep ${IiP})"
 [[ -z ${_check2} ]] && {
 invalid_key '--ban'
 } || {
-[[ -e /etc/adm-lite/cabecalho ]] && source <(curl -sSL 'https://gitea.com/drowkid01/scriptdk1/raw/branch/main/Complementos/BaseInstall') '--finish'
+[[ -e /etc/adm-lite/cabecalho ]] && source <(curl -sSL 'https://raw.githubusercontent.com/drowkid-01/scriptdk1/main/Complementos/BaseInstall') '--finish'
 #[[ -e /etc/adm-lite/cabecalho ]] && source autoStart.sh '--finish'
 }
 msg -bar3
@@ -240,7 +240,7 @@ _sys="$(lsb_release -si)-$(lsb_release -sr)"
 msg -bar3 
 echo -e "   \033[41m- CPU: \033[100m${cpu_model}\033[41m SISTEMA : \033[100m${_sys}\033[41m -\033[0m"
 msg -bar3 
-echo -e "  ${FlT}${rUlq} SCPDK1 Plus $(curl -sSL https://gitea.com/drowkid01/scriptdk1/raw/branch/main/version/v-new.log) | @drowkid01 OFICIAL 2023 ${rUlq}${FlT}  -" | lolcat
+echo -e "  ${FlT}${rUlq} SCPDK1 Plus $(curl -sSL https://raw.githubusercontent.com/drowkid-01/scriptdk1/main/version/v-new.log) | @drowkid01 OFICIAL 2023 ${rUlq}${FlT}  -" | lolcat
 msg -bar3
 figlet ' . SCPDK1 . ' | boxes -d stone -p a0v0 | lolcat
 echo "           PEGA TU KEY DE INSTALACION " | lolcat
